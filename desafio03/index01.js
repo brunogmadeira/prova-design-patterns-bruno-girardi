@@ -1,47 +1,56 @@
-//SALVANDO USUARIO UTILIZANDO O METODO SRP (UTILIZANDO CONTROLLER, SERVICE E REPOSITORY )
-
-class UserService {
-    constructor(userRepository, emailService) {
-      this.userRepository = userRepository;
-      this.emailService = emailService;
+//METODO S - SOLID
+class ProdutoService {
+    constructor(produtoRepository, estoqueService) {
+      this.produtoRepository = produtoRepository;
+      this.estoqueService = estoqueService;
     }
   
-    saveUser(user) {
-      if (!user.email) {
-        throw new Error("Email obrigatório");
+    adicionarProduto(produto) {
+      if (!produto.nome || !produto.preco) {
+        throw new Error("Nome e preço do produto são obrigatórios");
       }
   
-      this.userRepository.save(user);
-      this.emailService.sendWelcomeEmail(user);
+      this.produtoRepository.salvar(produto);
+      this.estoqueService.adicionarEstoque(produto);
     }
   }
   
-  class UserRepository {
-    save(user) {
-      console.log("Salvando usuário no banco...");
+  // Repositório de produtos
+  class ProdutoRepository {
+    salvar(produto) {
+      console.log(`Produto ${produto.nome} adicionado ao banco de dados...`);
     }
   }
   
-  class EmailService {
-    sendWelcomeEmail(user) {
-      console.log(`Enviando e-mail de boas-vindas para ${user.email}`);
+  // Serviço de controle de estoque
+  class EstoqueService {
+    adicionarEstoque(produto) {
+      console.log(`Adicionando ${produto.quantidade} unidades de ${produto.nome} ao estoque...`);
     }
   }
   
-  class UserController {
-    constructor(userService) {
-      this.userService = userService;
+  // Controlador de produtos
+  class ProdutoController {
+    constructor(produtoService) {
+      this.produtoService = produtoService;
     }
   
-    handleSaveRequest(reqBody) {
-      this.userService.saveUser(reqBody);
-      console.log("Usuário salvo com sucesso!");
+    handleAddProdutoRequest(reqBody) {
+      this.produtoService.adicionarProduto(reqBody);
+      console.log("Produto adicionado com sucesso!");
     }
   }
   
-  const repo = new UserRepository();
-  const email = new EmailService();
-  const service = new UserService(repo, email);
-  const controller = new UserController(service);
+  // Criando instâncias e utilizando os serviços
+  const produtoRepo = new ProdutoRepository();
+  const estoqueSvc = new EstoqueService();
+  const produtoSvc = new ProdutoService(produtoRepo, estoqueSvc);
+  const produtoController = new ProdutoController(produtoSvc);
   
-  controller.handleSaveRequest({ name: "Bruno", email: "bruno@email.com" });
+  // Simulando uma requisição para adicionar um novo produto
+  produtoController.handleAddProdutoRequest({
+    nome: "Camiseta",
+    preco: 49.90,
+    quantidade: 100
+  });
+  

@@ -1,39 +1,37 @@
-// Interface genérica (contrato)
-class PaymentMethod {
-    pay() {
-      throw new Error("Método 'pay()' deve ser implementado");
+//METODO O - SOLID
+class Notification {
+    send(message) {
+      throw new Error("Método 'send()' deve ser implementado");
     }
   }
   
-  // Implementações específicas
-  class PixPayment extends PaymentMethod {
-    pay() {
-      console.log("Pagamento via PIX realizado!");
+  class EmailNotification extends Notification {
+    send(message) {
+      console.log(`Enviando email com a mensagem: ${message}`);
     }
   }
   
-  class CardPayment extends PaymentMethod {
-    pay() {
-      console.log("Pagamento via Cartão realizado!");
+  class SMSNotification extends Notification {
+    send(message) {
+      console.log(`Enviando SMS com a mensagem: ${message}`);
     }
   }
   
-  class BoletoPayment extends PaymentMethod {
-    pay() {
-      console.log("Pagamento via Boleto realizado!");
+  class PushNotification extends Notification {
+    send(message) {
+      console.log(`Enviando notificação push com a mensagem: ${message}`);
     }
   }
   
-  // Classe principal aberta para extensão
-  class PaymentProcessor {
-    process(paymentMethod) {
-      paymentMethod.pay();
+  class NotificationService {
+    notify(notification, message) {
+      notification.send(message);
     }
   }
   
-  // Uso:
-  const processor = new PaymentProcessor();
+  const notificationService = new NotificationService();
   
-  processor.process(new PixPayment());
-  processor.process(new CardPayment());
-  processor.process(new BoletoPayment());
+  notificationService.notify(new EmailNotification(), "Seu pedido foi enviado!");
+  notificationService.notify(new SMSNotification(), "Seu código de verificação é 123456");
+  notificationService.notify(new PushNotification(), "Você tem uma nova mensagem no chat.");
+  
